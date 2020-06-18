@@ -5,6 +5,7 @@ const config = require('./config/config')[env]
 const express = require('express')
 const indexRouter = require('./routes/index')
 const authRouter = require('./routes/auth')
+const cubeRouter = require('./routes/cube')
 const app = express()
 
 
@@ -25,6 +26,7 @@ require('./config/express')(app)
 
 app.use('/', indexRouter)
 app.use('/', authRouter)
+app.use('/', cubeRouter)
 
 app.get('*', (req, res) => {
   res.render('404', {
