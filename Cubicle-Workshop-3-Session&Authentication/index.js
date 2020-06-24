@@ -28,6 +28,7 @@ require('./config/express')(app)
 app.use('/', indexRouter)
 app.use('/', authRouter)
 app.use('/', cubeRouter)
+app.use('/', accessoryRouter)
 
 app.get('*', (req, res) => {
   res.render('404', {

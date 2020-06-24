@@ -51,3 +51,5 @@ router.post('/attach/accessory/:id', async (req, res, next) => {
         next(err)
     }
 })
+
+module.exports = router
