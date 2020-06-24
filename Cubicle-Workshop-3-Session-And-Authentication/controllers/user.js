@@ -1,11 +1,10 @@
 const User = require('../models/user')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-
-const privateKey = 'cube-workshop-softuni' 
+const { jwtPrivateKey } = require('../config/constants')
 
 const generateJWToken = data => {
-    const JWToken = jwt.sign(data, privateKey)
+    const JWToken = jwt.sign(data, jwtPrivateKey)
 
     return JWToken
 }

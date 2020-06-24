@@ -1,7 +1,11 @@
 const express = require('express')
 const router = express.Router()
+const jwt = require('jsonwebtoken')
 const { getAllCubes, getCube, updateCube, getCubeWithAccessories } = require('../controllers/cubes')
+const { jwtPrivateKey } = require('../config/constants')
 const Cube = require('../models/cube')
+
+const privateKey = 'cube-workshop-softuni' 
 
 router.get('/edit', (req, res) => {
     res.render('editCubePage')
@@ -36,7 +40,10 @@ router.post('/create', (req, res) => {
         difficultyLevel
     } = req.body
 
-    const cube = new Cube({ name, description, imageUrl, difficulty: difficultyLevel })
+    const token = req.cookies['authId']
+    const decodedObject = jwt.verify(token, jwtPrivateKey)
+
+    const cube = new Cube({ name, description, imageUrl, difficulty: difficultyLevel, creatorId: decodedObject.userID })
 
     cube.save((err) => {
         if (err) {
