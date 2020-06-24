@@ -16,13 +16,13 @@ const saveUser = async (req, res) => {
     const salt = await bcrypt.genSalt(saltRounds);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const user = new User({ 
+    const user = new User({
         username,
-        password: hashedPassword 
+        password: hashedPassword
     })
     const userObject = await user.save()
 
-    const JWToken = generateJWToken({userID: userObject._id, username: userObject.username})
+    const JWToken = generateJWToken({ userID: userObject._id, username: userObject.username })
 
     res.cookie('authId', JWToken)
 
@@ -31,18 +31,62 @@ const saveUser = async (req, res) => {
 
 const verifyUser = async (req, res) => {
     const { username, password } = req.body
-    const user = await User.findOne({username})
+    const user = await User.findOne({ username })
     const status = await bcrypt.compare(password, user.password)
 
-    if(status){
-        const JWToken = generateJWToken({userID: user._id, username: user.username})
+    if (status) {
+        const JWToken = generateJWToken({ userID: user._id, username: user.username })
         res.cookie('authId', JWToken)
     }
 
     return status
 }
 
+const authAccess = (req, res, next) => {
+    const token = req.cookies['authId']
+
+    if (!token) {
+        return res.redirect('/')
+    }
+
+    try {
+        const decodedUserObject = jwt.verify(token, jwtPrivateKey)
+        next()
+    } catch (e) {
+        res.redirect('/')
+    }
+}
+
+const guestAccess = (req, res, next) => {
+    const token = req.cookies['authId']
+
+    if (token) {
+        return res.redirect('/')
+    }
+
+    next()
+}
+
+const getUserAuthStatus = (req, res, next) => {
+    const token = req.cookies['authId']
+    if (!token) {
+        req.isLoggedIn = false
+    }
+
+    try {
+        const decodedUserObject = jwt.verify(token, jwtPrivateKey)
+        req.isLoggedIn = true
+    } catch (e) {
+        req.isLoggedIn = false
+    }
+
+    next()
+}
+
 module.exports = {
     saveUser,
-    verifyUser
+    authAccess,
+    guestAccess,
+    verifyUser,
+    getUserAuthStatus
 }

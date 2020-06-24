@@ -1,30 +1,34 @@
 const express = require('express')
 const router = express.Router()
-const { saveUser, verifyUser } = require('../controllers/user')
+const { saveUser, verifyUser, guestAccess, getUserAuthStatus } = require('../controllers/user')
 const e = require('express')
 
-router.get('/login', (req, res) => {
-    res.render('loginPage')
+router.get('/login', guestAccess, (req, res) => {
+    res.render('loginPage', {
+        isLoggedIn: req.isLoggedIn
+    })
 })
 
-router.get('/signup', (req, res) => {
-    res.render('registerPage')
+router.get('/signup', guestAccess, getUserAuthStatus, (req, res) => {
+    res.render('registerPage', {
+        isLoggedIn: req.isLoggedIn
+    })
 })
 
-router.post('/signup', async (req, res) => {
+router.post('/signup', guestAccess, getUserAuthStatus, async (req, res) => {
     const status = await saveUser(req, res)
 
-    if (status){
+    if (status) {
         return res.redirect('/')
     } else {
         console.log('Error saving user!')
     }
 })
 
-router.post('/login', async (req, res) => {
+router.post('/login', guestAccess, async (req, res) => {
     const status = await verifyUser(req, res)
 
-    if (status){
+    if (status) {
         return res.redirect('/')
     } else {
         console.log('Error verifying user!')
