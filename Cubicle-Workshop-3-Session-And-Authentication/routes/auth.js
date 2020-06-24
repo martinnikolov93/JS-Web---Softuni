@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const {saveUser} = require('../controllers/user')
+const { saveUser, verifyUser } = require('../controllers/user')
 const e = require('express')
 
 router.get('/login', (req, res) => {
@@ -18,6 +18,16 @@ router.post('/signup', async (req, res) => {
         return res.redirect('/')
     } else {
         console.log('Error saving user!')
+    }
+})
+
+router.post('/login', async (req, res) => {
+    const status = await verifyUser(req, res)
+
+    if (status){
+        return res.redirect('/')
+    } else {
+        console.log('Error verifying user!')
     }
 })
 
