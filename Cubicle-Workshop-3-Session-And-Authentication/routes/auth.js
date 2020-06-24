@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
-const User = require('../models/user')
+const {saveUser} = require('../controllers/user')
+const e = require('express')
 
 router.get('/login', (req, res) => {
     res.render('loginPage')
@@ -11,11 +12,13 @@ router.get('/signup', (req, res) => {
 })
 
 router.post('/signup', async (req, res) => {
-    const {username, password} = req.body
-    const user = new User({username, password})
-    await user.save()
+    const status = await saveUser(req, res)
 
-    res.redirect('/')
+    if (status){
+        return res.redirect('/')
+    } else {
+        console.log('Error saving user!')
+    }
 })
 
 module.exports = router
