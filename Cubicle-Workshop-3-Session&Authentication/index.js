@@ -6,6 +6,7 @@ const express = require('express')
 const indexRouter = require('./routes/index')
 const authRouter = require('./routes/auth')
 const cubeRouter = require('./routes/cube')
+const accessoryRouter = require('./routes/accessory')
 const app = express()
 
 
