@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const jwt = require('jsonwebtoken')
-const { getAllCubes, getCube, updateCube, updateCubeAccessory, getCubeWithAccessories } = require('../controllers/cubes')
+const { getAllCubes, deleteCube, getCube, updateCube, updateCubeAccessory, getCubeWithAccessories } = require('../controllers/cubes')
 const { authAccess, getUserAuthStatus } = require('../controllers/user')
 const { jwtPrivateKey } = require('../config/constants')
 const Cube = require('../models/cube')
@@ -37,9 +37,7 @@ router.get('/delete/:id', authAccess, getUserAuthStatus, async (req, res) => {
 })
 
 router.post('/delete/:id', authAccess, getUserAuthStatus, async (req, res) => {
-    await Cube
-    .findByIdAndDelete(req.params.id)
-    .catch(err => res.status(400).send(err.message))
+    await deleteCube(req.params.id)
 
     res.redirect('/')
 })

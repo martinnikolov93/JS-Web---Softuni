@@ -28,6 +28,12 @@ const updateCube = async (cubeId, cube) => {
   }
 }
 
+const deleteCube = async (cubeId) => {
+  await Cube
+    .findByIdAndDelete(cubeId)
+    .catch(err => res.status(400).send(err.message))
+}
+
 const updateCubeAccessory = async (cubeId, accessoryId) => {
   try {
     await Cube.findByIdAndUpdate(cubeId, {
@@ -51,5 +57,6 @@ module.exports = {
   getCube,
   updateCubeAccessory,
   updateCube,
-  getCubeWithAccessories
+  getCubeWithAccessories,
+  deleteCube
 }
