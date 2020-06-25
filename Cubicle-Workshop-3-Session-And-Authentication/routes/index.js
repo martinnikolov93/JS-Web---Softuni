@@ -1,5 +1,5 @@
 const { Router } = require('express')
-const { getAllCubes, getCube, updateCube, getCubeWithAccessories } = require('../controllers/cubes')
+const { getAllCubes, getCube, updateCubeAccessory, getCubeWithAccessories } = require('../controllers/cubes')
 const { getUserAuthStatus } = require('../controllers/user')
 const router = Router()
 

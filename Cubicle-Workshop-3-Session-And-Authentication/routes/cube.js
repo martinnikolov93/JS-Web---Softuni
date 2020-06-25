@@ -1,29 +1,52 @@
 const express = require('express')
 const router = express.Router()
 const jwt = require('jsonwebtoken')
-const { getAllCubes, getCube, updateCube, getCubeWithAccessories } = require('../controllers/cubes')
+const { getAllCubes, getCube, updateCube, updateCubeAccessory, getCubeWithAccessories } = require('../controllers/cubes')
 const { authAccess, getUserAuthStatus } = require('../controllers/user')
 const { jwtPrivateKey } = require('../config/constants')
 const Cube = require('../models/cube')
 
 const privateKey = 'cube-workshop-softuni'
 
-router.get('/edit', authAccess, getUserAuthStatus, (req, res) => {
+router.get('/edit/:id', authAccess, getUserAuthStatus, async (req, res) => {
+    const cube = await getCube(req.params.id)
+
     res.render('editCubePage', {
-        isLoggedIn: req.isLoggedIn
+        title: 'Edit cube | Cube Workshop',
+        isLoggedIn: req.isLoggedIn,
+        ...cube
     })
 })
 
-router.get('/delete', authAccess, getUserAuthStatus, (req, res) => {
+router.post('/edit/:id', authAccess, getUserAuthStatus, async (req, res) => {
+    console.log(req.body)
+    const cube = req.body
+    await updateCube(req.params.id, cube)
+    res.redirect(`/details/${req.params.id}`)
+})
+
+router.get('/delete/:id', authAccess, getUserAuthStatus, async (req, res) => {
+
+    const cube = await getCube(req.params.id)
+
     res.render('deleteCubePage', {
-        isLoggedIn: req.isLoggedIn
+        title: 'Delete cube | Cube Workshop',
+        isLoggedIn: req.isLoggedIn,
+        ...cube
     })
+})
+
+router.post('/delete/:id', authAccess, getUserAuthStatus, async (req, res) => {
+    await Cube
+    .findByIdAndDelete(req.params.id)
+    .catch(err => res.status(400).send(err.message))
+
+    res.redirect('/')
 })
 
 router.get('/details/:id', getUserAuthStatus, async (req, res) => {
 
     const cube = await getCubeWithAccessories(req.params.id)
-
 
     res.render('details', {
         title: 'Details | Cube Workshop',

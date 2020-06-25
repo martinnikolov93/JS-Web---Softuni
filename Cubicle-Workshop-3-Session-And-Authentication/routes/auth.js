@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const { saveUser, verifyUser, guestAccess, getUserAuthStatus } = require('../controllers/user')
+const { saveUser, verifyUser, guestAccess, authAccess, getUserAuthStatus } = require('../controllers/user')
 const e = require('express')
 
 router.get('/login', guestAccess, (req, res) => {
@@ -13,6 +13,11 @@ router.get('/signup', guestAccess, getUserAuthStatus, (req, res) => {
     res.render('registerPage', {
         isLoggedIn: req.isLoggedIn
     })
+})
+
+router.get('/logout', authAccess, getUserAuthStatus, (req, res) => {
+    res.clearCookie('authId');
+    res.redirect('/')
 })
 
 router.post('/signup', guestAccess, getUserAuthStatus, async (req, res) => {

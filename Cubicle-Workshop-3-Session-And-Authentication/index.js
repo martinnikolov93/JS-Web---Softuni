@@ -1,3 +1,4 @@
+require('dotenv').config()
 const env = process.env.NODE_ENV || 'development'
 
 const mongoose = require('mongoose')
@@ -8,7 +9,6 @@ const authRouter = require('./routes/auth')
 const cubeRouter = require('./routes/cube')
 const accessoryRouter = require('./routes/accessory')
 const app = express()
-
 
 mongoose.connect(config.databaseUrl, {
   useNewUrlParser: true,
@@ -21,7 +21,6 @@ mongoose.connect(config.databaseUrl, {
 
   console.log('Database is setup and running')
 })
-
 
 require('./config/express')(app)
 

@@ -1,20 +1,20 @@
 <h1>Edit Cube</h1>
 <div class="form">
-  <form action='/' method="POST">
+  <form action='/edit/{{this._id}}' method="POST">
     <label for="name">Name</label>
-    <input type="text" id="name" name="name" value="">
-    <label for="name">Description</label>
-    <textarea id="name" name="description"></textarea>
+    <input type="text" id="name" name="name" value="{{this.name}}">
+    <label for="description">Description</label>
+    <textarea id="description" name="description">{{this.description}}</textarea>
     <label for="image">ImageUrl</label>
-    <input type="text" id="image" name="imageUrl" value="">
+    <input type="text" id="image" name="imageUrl" value="{{this.imageUrl}}">
     <label for="difficulty">Difficulty</label>
-    <select id="difficulty" name="difficultyLevel">
-      <option value="1">1 - Very Easy</option>
-      <option value="2">2 - Easy</option>
-      <option value="3">3 - Medium (Standard 3x3)</option>
-      <option value="4">4 - Intermediate</option>
-      <option value="5">5 - Expert</option>
-      <option value="6">6 - Hardcore</option>
+    <select id="difficulty" value="{{this.difficulty}}" name="difficulty">
+      <option {{#if (isEqual difficulty 1)}} selected {{/if}} value="1">1 - Very Easy</option>
+      <option {{#if (isEqual difficulty 2)}} selected {{/if}} value="2">2 - Easy</option>
+      <option {{#if (isEqual difficulty 3)}} selected {{/if}} value="3">3 - Medium (Standard 3x3)</option>
+      <option {{#if (isEqual difficulty 4)}} selected {{/if}} value="4">4 - Intermediate</option>
+      <option {{#if (isEqual difficulty 5)}} selected {{/if}} value="5">5 - Expert</option>
+      <option {{#if (isEqual difficulty 6)}} selected {{/if}} value="6">6 - Hardcore</option>
     </select>
     <input type="submit" value="Edit">
   </form>

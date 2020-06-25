@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const { getAccessories, attachedAccessories } = require('../controllers/accessories')
 const { authAccess, getUserAuthStatus } = require('../controllers/user')
-const {updateCube} = require('../controllers/cubes')
+const {updateCubeAccessory} = require('../controllers/cubes')
 const Accessory = require('../models/accessory')
 
 router.get('/create/accessory', authAccess, getUserAuthStatus, (req, res) => {
@@ -49,7 +49,7 @@ router.post('/attach/accessory/:id', authAccess, async (req, res, next) => {
     const { accessory: accessoryId } = req.body
     const { id: cubeId } = req.params
     try {
-        await updateCube(cubeId, accessoryId)
+        await updateCubeAccessory(cubeId, accessoryId)
         res.redirect(`/details/${cubeId}`)
     } catch (err) {
         next(err)
