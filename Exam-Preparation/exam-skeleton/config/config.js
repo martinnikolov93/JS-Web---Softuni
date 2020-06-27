@@ -1,4 +1,4 @@
-const dbname = 'cubicle'
+const dbname = ''
 const dbuser = 'user'
 const dbpass = process.env.DB_PASSWORD
 module.exports = {

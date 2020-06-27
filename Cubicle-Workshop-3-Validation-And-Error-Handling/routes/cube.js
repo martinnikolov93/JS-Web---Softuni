@@ -29,9 +29,6 @@ router.post('/edit/:id', authAccess, getUserAuthStatus, async (req, res) => {
     } else {
         res.redirect(`/details/${req.params.id}`)
     }
-
-    // await updateCube(req.params.id, cube)
-    // res.redirect(`/details/${req.params.id}`)
 })
 
 router.get('/delete/:id', authAccess, getUserAuthStatus, async (req, res) => {

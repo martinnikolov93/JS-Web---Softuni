@@ -16,13 +16,15 @@ const UserSchema = new mongoose.Schema({
   },
 })
 
-UserSchema.path('username').validate(function (username) {
-  return username.match(/^[a-zA-z0-9]+$/)
-}, 'Username is allowed to have only english characters and numbers')
-UserSchema.path('password').validate(function (password) {
-  return password.match(/^[a-zA-z0-9]+$/)
-}, 'Password is allowed to have only english characters and numbers')
+//Regex examples
+// UserSchema.path('username').validate(function (username) {
+//   return username.match(/^[a-zA-z0-9]+$/)
+// }, 'Username is allowed to have only english characters and numbers')
+// UserSchema.path('password').validate(function (password) {
+//   return password.match(/^[a-zA-z0-9]+$/)
+// }, 'Password is allowed to have only english characters and numbers')
 
+//Hash user password
 UserSchema.pre("save", async function (next) {
   try {
     const salt = await bcrypt.genSalt(constants.saltRounds);

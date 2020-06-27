@@ -32,8 +32,7 @@ const CubeSchema = new mongoose.Schema({
 
 CubeSchema.path('name').validate(function (name) {
   return name.match(/^[a-zA-z0-9]+$/)
-}, 'Name is allowed to have only english characters and numbers'
-)
+}, 'Name is allowed to have only english characters and numbers')
 CubeSchema.path('imageUrl').validate(function(url) {
   return url.startsWith('http://') || url.startsWith('https://')
 }, 'Image url must start with http or https.')
