@@ -1,9 +1,32 @@
 const Cube = require('../models/cube')
 const Accessory = require('../models/accessory')
+const { passError } = require('../utils/helpers')
+const jwt = require('jsonwebtoken')
+const { constants } = require('../config/constants')
+
+const createCube = async (req, res) => {
+  const {
+    name,
+    description,
+    imageUrl,
+    difficultyLevel
+  } = req.body
+
+  const token = req.cookies['authId']
+  const decodedUserObject = jwt.verify(token, constants.jwtPrivateKey)
+
+  const cube = new Cube({ name, description, imageUrl, difficulty: difficultyLevel, creatorId: decodedUserObject.userID })
+  try {
+    return await cube.save()
+  } catch (err) {
+    const path = Object.keys(err.errors)[0]
+    return passError(err.errors[path].properties.message)
+  }
+}
 
 const getAllCubes = async () => {
   const cubes = await Cube.find().lean()
-  
+
   return cubes
 }
 
@@ -21,10 +44,15 @@ const getCubeWithAccessories = async (id) => {
 
 const updateCube = async (cubeId, cube) => {
   try {
-    await Cube.findByIdAndUpdate(cubeId, cube)
-    return true
-  } catch (e) {
-    return false
+    const cubeObj = new Cube(cube)
+    const error = cubeObj.validateSync()
+    if (error){
+      throw error
+    }
+    return await Cube.findByIdAndUpdate(cubeId, cube)
+  } catch (err) {
+    const path = Object.keys(err.errors)[0]
+    return passError(err.errors[path].properties.message)
   }
 }
 
@@ -58,5 +86,6 @@ module.exports = {
   updateCubeAccessory,
   updateCube,
   getCubeWithAccessories,
-  deleteCube
+  deleteCube,
+  createCube
 }

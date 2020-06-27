@@ -1,3 +1,6 @@
 module.exports = {
-    jwtPrivateKey: 'cube-workshop-softuni',
+    constants: {
+        jwtPrivateKey: 'cube-workshop-softuni',
+        saltRounds: 10
+    }
 }

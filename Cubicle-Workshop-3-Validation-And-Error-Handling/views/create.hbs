@@ -3,11 +3,11 @@
 <div class="form">
   <form action='/create' method="POST">
     <label for="name">Name</label>
-    <input type="text" id="name" name="name">
+    <input type="text" id="name" name="name" value="{{oldInput.name}}">
     <label for="name">Description</label>
-    <textarea id="name" name="description"></textarea>
+    <textarea id="name" name="description">{{oldInput.description}}</textarea>
     <label for="image">ImageUrl</label>
-    <input type="text" id="image" name="imageUrl">
+    <input type="text" id="image" name="imageUrl" value="{{oldInput.imageUrl}}">
     <label for="difficulty">Difficulty</label>
     <select id="difficulty" name="difficultyLevel">
       <option value="1">1 - Very Easy</option>

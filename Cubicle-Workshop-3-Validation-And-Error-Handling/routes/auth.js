@@ -1,7 +1,6 @@
 const express = require('express')
 const router = express.Router()
 const { saveUser, verifyUser, guestAccess, authAccess, getUserAuthStatus } = require('../controllers/user')
-const e = require('express')
 
 router.get('/login', guestAccess, (req, res) => {
     res.render('loginPage', {
@@ -16,27 +15,36 @@ router.get('/signup', guestAccess, getUserAuthStatus, (req, res) => {
 })
 
 router.get('/logout', authAccess, getUserAuthStatus, (req, res) => {
-    res.clearCookie('authId');
+    res.clearCookie('authId')
     res.redirect('/')
 })
 
 router.post('/signup', guestAccess, getUserAuthStatus, async (req, res) => {
-    const status = await saveUser(req, res)
 
-    if (status) {
-        return res.redirect('/')
+    const { error, message } = await saveUser(req, res)
+
+    if (error) {
+        return res.render('registerPage', {
+            error: true,
+            errorMessage: message,
+            isLoggedIn: req.isLoggedIn,
+        })
     } else {
-        console.log('Error saving user!')
+        return res.redirect('/')
     }
 })
 
-router.post('/login', guestAccess, async (req, res) => {
-    const status = await verifyUser(req, res)
+router.post('/login', guestAccess, getUserAuthStatus, async (req, res) => {
+    const { error, message } = await verifyUser(req, res)
 
-    if (status) {
-        return res.redirect('/')
+    if (error) {
+        return res.render('loginPage', {
+            error: true,
+            errorMessage: message,
+            isLoggedIn: req.isLoggedIn,
+        })
     } else {
-        console.log('Error verifying user!')
+        return res.redirect('/')
     }
 })
 

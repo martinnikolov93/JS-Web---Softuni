@@ -1,45 +1,71 @@
 const User = require('../models/user')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-const { jwtPrivateKey } = require('../config/constants')
+const { constants } = require('../config/constants')
+const { passError } = require('../utils/helpers')
 
 const generateJWToken = data => {
-    const JWToken = jwt.sign(data, jwtPrivateKey)
+    const JWToken = jwt.sign(data, constants.jwtPrivateKey)
 
     return JWToken
 }
 
 const saveUser = async (req, res) => {
-    const { username, password } = req.body
+    const { username, password, repeatPassword } = req.body
 
-    const saltRounds = 10
-    const salt = await bcrypt.genSalt(saltRounds);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    if (username.length < 5) {
+        return passError('Username length must be at least 5 characters.')
+    }
+    if(!username.match(/^[a-zA-z0-9]+$/)){
+        return passError('Username is allowed to have only english characters and numbers')
+    }
+    if (password.length < 8) {
+        return passError('Password length must be at least 8 characters.')
+    }
+    if(!password.match(/^[a-zA-z0-9]+$/)){
+        return passError('Password is allowed to have only english characters and numbers')
+    }
+    if (password !== repeatPassword) {
+        return passError('Passwords does not match.')
+    }
 
     const user = new User({
         username,
-        password: hashedPassword
+        password
     })
-    const userObject = await user.save()
 
-    const JWToken = generateJWToken({ userID: userObject._id, username: userObject.username })
+    try {
+        const userObject = await user.save()
 
-    res.cookie('authId', JWToken)
-
-    return true;
+        const JWToken = generateJWToken({ userID: userObject._id, username: userObject.username })
+    
+        res.cookie('authId', JWToken)
+    
+        return JWToken
+    } catch (e) {
+        if (e.code == 11000){
+            return passError('Username already exists.')
+        }
+        return passError('Something went wrong.')
+    }
 }
 
 const verifyUser = async (req, res) => {
     const { username, password } = req.body
     const user = await User.findOne({ username })
-    const status = await bcrypt.compare(password, user.password)
+    if (!user){
+        return passError('User does not exist!')
+    }
+    const passIsValid = await bcrypt.compare(password, user.password)
 
-    if (status) {
-        const JWToken = generateJWToken({ userID: user._id, username: user.username })
-        res.cookie('authId', JWToken)
+    if (!passIsValid) {
+        return passError('Wrong password!')
     }
 
-    return status
+    const JWToken = generateJWToken({ userID: user._id, username: user.username })
+    res.cookie('authId', JWToken)
+
+    return passIsValid
 }
 
 const authAccess = (req, res, next) => {
@@ -50,7 +76,7 @@ const authAccess = (req, res, next) => {
     }
 
     try {
-        const decodedUserObject = jwt.verify(token, jwtPrivateKey)
+        const decodedUserObject = jwt.verify(token, constants.jwtPrivateKey)
         next()
     } catch (e) {
         res.redirect('/')
@@ -74,7 +100,7 @@ const getUserAuthStatus = (req, res, next) => {
     }
 
     try {
-        const decodedUserObject = jwt.verify(token, jwtPrivateKey)
+        const decodedUserObject = jwt.verify(token, constants.jwtPrivateKey)
         req.isLoggedIn = true
     } catch (e) {
         req.isLoggedIn = false

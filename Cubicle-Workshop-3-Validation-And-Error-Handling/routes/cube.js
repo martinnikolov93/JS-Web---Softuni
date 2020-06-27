@@ -1,12 +1,7 @@
 const express = require('express')
 const router = express.Router()
-const jwt = require('jsonwebtoken')
-const { getAllCubes, deleteCube, getCube, updateCube, updateCubeAccessory, getCubeWithAccessories } = require('../controllers/cubes')
+const { createCube, getAllCubes, deleteCube, getCube, updateCube, updateCubeAccessory, getCubeWithAccessories } = require('../controllers/cubes')
 const { authAccess, getUserAuthStatus } = require('../controllers/user')
-const { jwtPrivateKey } = require('../config/constants')
-const Cube = require('../models/cube')
-
-const privateKey = 'cube-workshop-softuni'
 
 router.get('/edit/:id', authAccess, getUserAuthStatus, async (req, res) => {
     const cube = await getCube(req.params.id)
@@ -19,10 +14,24 @@ router.get('/edit/:id', authAccess, getUserAuthStatus, async (req, res) => {
 })
 
 router.post('/edit/:id', authAccess, getUserAuthStatus, async (req, res) => {
-    console.log(req.body)
     const cube = req.body
-    await updateCube(req.params.id, cube)
-    res.redirect(`/details/${req.params.id}`)
+
+    const {error, message} = await updateCube(req.params.id, cube)
+
+    if (error){
+        return res.render('editCubePage', {
+            error: true,
+            errorMessage: message,
+            isLoggedIn: req.isLoggedIn,
+            _id: req.params.id,
+            ...cube
+        })
+    } else {
+        res.redirect(`/details/${req.params.id}`)
+    }
+
+    // await updateCube(req.params.id, cube)
+    // res.redirect(`/details/${req.params.id}`)
 })
 
 router.get('/delete/:id', authAccess, getUserAuthStatus, async (req, res) => {
@@ -60,27 +69,20 @@ router.get('/create', authAccess, getUserAuthStatus, (req, res) => {
     })
 })
 
-router.post('/create', authAccess, (req, res) => {
-    const {
-        name,
-        description,
-        imageUrl,
-        difficultyLevel
-    } = req.body
+router.post('/create', authAccess, getUserAuthStatus, async (req, res) => {
+    
+    const {error, message} = await createCube(req, res)
 
-    const token = req.cookies['authId']
-    const decodedObject = jwt.verify(token, jwtPrivateKey)
-
-    const cube = new Cube({ name, description, imageUrl, difficulty: difficultyLevel, creatorId: decodedObject.userID })
-
-    cube.save((err) => {
-        if (err) {
-            console.error(err)
-            res.redirect('/create')
-        } else {
-            res.redirect('/')
-        }
-    })
+    if (error){
+        return res.render('create', {
+            error: true,
+            errorMessage: message,
+            isLoggedIn: req.isLoggedIn,
+            oldInput: req.body
+        })
+    } else {
+        return res.redirect('/')
+    }
 })
 
 module.exports = router

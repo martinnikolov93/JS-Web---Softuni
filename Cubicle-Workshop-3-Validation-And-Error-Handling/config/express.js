@@ -8,7 +8,7 @@ module.exports = (app) => {
   app.use(express.urlencoded({ extended: true }))
   app.engine('.hbs', handlebars({
     extname: '.hbs',
-    helpers: require('../helpers/helpers')
+    helpers: require('../utils/helpers')
   }))
   
   app.set('view engine', '.hbs');
