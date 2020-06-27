@@ -11,27 +11,28 @@ const generateJWToken = data => {
 }
 
 const saveUser = async (req, res) => {
-    const { username, password, repeatPassword } = req.body
+    const { email, password, repeatPassword } = req.body
 
     if (password !== repeatPassword) {
         return passError('Passwords does not match.')
     }
 
     const user = new User({
-        username,
+        email,
         password
     })
 
     try {
         const userObject = await user.save()
-        const JWToken = generateJWToken({ userID: userObject._id, username: userObject.username })
+        const JWToken = generateJWToken({ userID: userObject._id, email: userObject.email })
 
         res.cookie('authId', JWToken)
 
         return JWToken
     } catch (err) {
-        if (err.code == 11000){
-            return passError('Username already exists.')
+        console.log(err)
+        if (err.code == 11000) {
+            return passError('Email already exists.')
         }
         const path = Object.keys(err.errors)[0]
         return passError(err.errors[path].properties.message)
@@ -40,8 +41,8 @@ const saveUser = async (req, res) => {
 }
 
 const verifyUser = async (req, res) => {
-    const { username, password } = req.body
-    const user = await User.findOne({ username })
+    const { email, password } = req.body
+    const user = await User.findOne({ email })
     if (!user) {
         return passError('User does not exist!')
     }
@@ -51,7 +52,7 @@ const verifyUser = async (req, res) => {
         return passError('Wrong password!')
     }
 
-    const JWToken = generateJWToken({ userID: user._id, username: user.username })
+    const JWToken = generateJWToken({ userID: user._id, email: user.email })
     res.cookie('authId', JWToken)
 
     return passIsValid
@@ -91,6 +92,8 @@ const getUserAuthStatus = (req, res, next) => {
     try {
         const decodedUserObject = jwt.verify(token, constants.jwtPrivateKey)
         req.isLoggedIn = true
+        req.id = decodedUserObject.userID
+        req.email = decodedUserObject.email
     } catch (e) {
         req.isLoggedIn = false
     }
@@ -98,10 +101,16 @@ const getUserAuthStatus = (req, res, next) => {
     next()
 }
 
+const getUserById = async (id) => {
+    const user = await User.findById(id).lean()
+    return user
+}
+
 module.exports = {
     saveUser,
     authAccess,
     guestAccess,
     verifyUser,
-    getUserAuthStatus
+    getUserAuthStatus,
+    getUserById
 }

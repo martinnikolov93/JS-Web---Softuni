@@ -2,15 +2,17 @@ const express = require('express')
 const router = express.Router()
 const { saveUser, verifyUser, guestAccess, authAccess, getUserAuthStatus } = require('../controllers/user')
 
-router.get('/login', guestAccess, (req, res) => {
+router.get('/login', guestAccess, getUserAuthStatus, (req, res) => {
     res.render('loginPage', {
-        isLoggedIn: req.isLoggedIn
+        isLoggedIn: req.isLoggedIn,
+        loggedEmail: req.email
     })
 })
 
 router.get('/signup', guestAccess, getUserAuthStatus, (req, res) => {
     res.render('registerPage', {
-        isLoggedIn: req.isLoggedIn
+        isLoggedIn: req.isLoggedIn,
+        loggedEmail: req.email
     })
 })
 
@@ -28,6 +30,7 @@ router.post('/signup', guestAccess, getUserAuthStatus, async (req, res) => {
             error: true,
             errorMessage: message,
             isLoggedIn: req.isLoggedIn,
+            loggedEmail: req.email
         })
     } else {
         return res.redirect('/')
@@ -42,6 +45,7 @@ router.post('/login', guestAccess, getUserAuthStatus, async (req, res) => {
             error: true,
             errorMessage: message,
             isLoggedIn: req.isLoggedIn,
+            loggedEmail: req.email
         })
     } else {
         return res.redirect('/')

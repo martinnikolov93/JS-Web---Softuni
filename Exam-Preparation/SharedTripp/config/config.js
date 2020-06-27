@@ -1,4 +1,4 @@
-const dbname = ''
+const dbname = 'sharedtripp'
 const dbuser = 'user'
 const dbpass = process.env.DB_PASSWORD
 module.exports = {

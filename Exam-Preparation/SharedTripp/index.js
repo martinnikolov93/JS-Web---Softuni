@@ -6,6 +6,7 @@ const config = require('./config/config')[env]
 const express = require('express')
 const indexRouter = require('./routes/index')
 const authRouter = require('./routes/auth')
+const trippsRouter = require('./routes/tripps')
 const app = express()
 
 mongoose.connect(config.databaseUrl, {
@@ -25,6 +26,7 @@ require('./config/express')(app)
 
 app.use('/', indexRouter)
 app.use('/', authRouter)
+app.use('/', trippsRouter)
 
 app.get('*', (req, res) => {
   res.render('404', {

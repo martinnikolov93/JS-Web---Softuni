@@ -3,26 +3,25 @@ const bcrypt = require('bcrypt')
 const { constants } = require('../config/constants')
 
 const UserSchema = new mongoose.Schema({
-  username: {
+  email: {
     type: String,
-    required: [true, 'Username is required'],
-    unique: [true, 'Username already taken'],
-    minlength: [5, 'Username must be at least 5 characters']
+    required: [true, 'Email is required'],
+    unique: true,
   },
   password: {
     type: String,
     required: [true, 'Password is required'],
-    minlength: [8, 'Password must be at least 8 characters']
+    minlength: [6, 'Password must be at least 6 characters']
   },
+  trippHistory: [{
+    type: 'ObjectId',
+    ref: 'Tripp'
+  }],
 })
 
-//Regex examples
-// UserSchema.path('username').validate(function (username) {
-//   return username.match(/^[a-zA-z0-9]+$/)
-// }, 'Username is allowed to have only english characters and numbers')
-// UserSchema.path('password').validate(function (password) {
-//   return password.match(/^[a-zA-z0-9]+$/)
-// }, 'Password is allowed to have only english characters and numbers')
+UserSchema.path('email').validate(function (email) {
+  return email.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)
+}, 'Invalid email.')
 
 //Hash user password
 UserSchema.pre("save", async function (next) {
