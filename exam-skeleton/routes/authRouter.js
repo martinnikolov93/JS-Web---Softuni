@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const { saveUser, verifyUser, guestAccess, authAccess, getUserAuthStatus } = require('../controllers/user')
+const { saveUser, verifyUser, guestAccess, authAccess, getUserAuthStatus } = require('../controllers/userController')
 
 router.get('/login', guestAccess, (req, res) => {
     res.render('loginPage', {

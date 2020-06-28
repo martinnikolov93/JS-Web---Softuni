@@ -4,8 +4,8 @@ const env = process.env.NODE_ENV || 'development'
 const mongoose = require('mongoose')
 const config = require('./config/config')[env]
 const express = require('express')
-const indexRouter = require('./routes/index')
-const authRouter = require('./routes/auth')
+const indexRouter = require('./routes/indexRouter')
+const authRouter = require('./routes/authRouter')
 const app = express()
 
 mongoose.connect(config.databaseUrl, {

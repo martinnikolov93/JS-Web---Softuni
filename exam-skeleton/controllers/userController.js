@@ -1,4 +1,4 @@
-const User = require('../models/user')
+const User = require('../models/userModel')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const { constants } = require('../config/constants')
@@ -30,7 +30,7 @@ const saveUser = async (req, res) => {
 
         return JWToken
     } catch (err) {
-        if (err.code == 11000){
+        if (err.code == 11000) {
             return passError('Username already exists.')
         }
         const path = Object.keys(err.errors)[0]
