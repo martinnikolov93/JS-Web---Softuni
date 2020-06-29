@@ -2,13 +2,17 @@
 <html lang="en">
 
 <head>
- 
+    <meta charset="UTF-8">
+    <title>{{title}}</title>
+    <link href="../static/css/style.css" type="text/css" rel="stylesheet">
 </head>
 
 <body>
   {{> header }}
   {{> notification}}
+  <main>
     {{{body}}}
+  </main>
   {{> footer }}
 </body>
 

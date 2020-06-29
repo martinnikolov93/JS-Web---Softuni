@@ -91,6 +91,7 @@ const getUserAuthStatus = (req, res, next) => {
     try {
         const decodedUserObject = jwt.verify(token, constants.jwtPrivateKey)
         req.isLoggedIn = true
+        req.userID = decodedUserObject.userID
     } catch (e) {
         req.isLoggedIn = false
     }
@@ -103,5 +104,5 @@ module.exports = {
     authAccess,
     guestAccess,
     verifyUser,
-    getUserAuthStatus
+    getUserAuthStatus,
 }

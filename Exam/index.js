@@ -7,6 +7,7 @@ const express = require('express')
 
 const indexRouter = require('./routes/indexRouter')
 const authRouter = require('./routes/authRouter')
+const playRouter = require('./routes/playRouter')
 const app = express()
 
 mongoose.connect(config.databaseUrl, {
@@ -26,6 +27,7 @@ require('./config/express')(app)
 
 app.use('/', indexRouter)
 app.use('/', authRouter)
+app.use('/', playRouter)
 
 app.get('*', (req, res) => {
   res.render('404', {

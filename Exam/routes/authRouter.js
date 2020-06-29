@@ -2,14 +2,16 @@ const express = require('express')
 const router = express.Router()
 const { saveUser, verifyUser, guestAccess, authAccess, getUserAuthStatus } = require('../controllers/userController')
 
-router.get('/login', guestAccess, (req, res) => {
+router.get('/login', guestAccess, getUserAuthStatus, (req, res) => {
     res.render('loginPage', {
+        title: 'Login',
         isLoggedIn: req.isLoggedIn
     })
 })
 
 router.get('/signup', guestAccess, getUserAuthStatus, (req, res) => {
     res.render('registerPage', {
+        title: 'Register',
         isLoggedIn: req.isLoggedIn
     })
 })

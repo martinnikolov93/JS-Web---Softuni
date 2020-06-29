@@ -7,22 +7,25 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Username is required'],
     unique: [true, 'Username already taken'],
-    minlength: [5, 'Username must be at least 5 characters']
+    minlength: [3, 'Username must be at least 3 characters']
   },
   password: {
     type: String,
     required: [true, 'Password is required'],
-    minlength: [8, 'Password must be at least 8 characters']
+    minlength: [3, 'Password must be at least 3 characters']
   },
+  likedPlays: {
+    type: 'ObjectId',
+    ref: 'Play'
+  }
 })
 
-//Regex examples
-// UserSchema.path('username').validate(function (username) {
-//   return username.match(/^[a-zA-z0-9]+$/)
-// }, 'Username is allowed to have only english characters and numbers')
-// UserSchema.path('password').validate(function (password) {
-//   return password.match(/^[a-zA-z0-9]+$/)
-// }, 'Password is allowed to have only english characters and numbers')
+UserSchema.path('username').validate(function (username) {
+  return username.match(/^[a-zA-z0-9]+$/)
+}, 'Username is allowed to have only english characters and numbers')
+UserSchema.path('password').validate(function (password) {
+  return password.match(/^[a-zA-z0-9]+$/)
+}, 'Password is allowed to have only english characters and numbers')
 
 //Hash user password
 UserSchema.pre("save", async function (next) {
